@@ -27,22 +27,23 @@ import pcl
 class Self_Awareness:
 
     def __init__(self, data_dir):
+        
+        self.path_trajectory, self.path_pcd = self.check_data_path(data_dir)
 
-
-        poses = genfromtxt(os.path.join(data_dir, 'trajectory.csv'), delimiter=',')
+        poses = genfromtxt(self.path_trajectory, delimiter=',')
 
         self.QUEUE_NUM = 10
         self.veldynes = []
         self.odoms = []
-        num_frames = 10000
+        num_frames = self.get_num_frames()
 
         index = 0
-        index_total = poses.shape[0]
 
         if not os.path.exists(os.path.join(data_dir, 'imgs')):
             os.mkdir(os.path.join(data_dir, 'imgs'))
-
-        for i in tqdm(range(index, index_total)):
+        time.sleep(1)
+        
+        for i in tqdm(range(index, index + num_frames)):
             file = os.path.join(data_dir, 'global/{0:06d}.pcd'.format(i))
             points = pcl.load(file)
 
@@ -50,6 +51,46 @@ class Self_Awareness:
 
             self.save_vels(vels, file_name=os.path.join(data_dir, 'imgs/{0:06d}.png'.format(i)))
 
+    def get_num_frames(self):
+        num_trajectory = len(genfromtxt(self.path_trajectory, delimiter=','))
+        num_pcd = len(os.listdir(self.path_pcd))
+        num_frames = min(num_trajectory,num_pcd)
+        print("Frames:", num_frames)
+
+        return num_frames
+
+    def check_data_path(self,path):
+        file_list = os.listdir(path)
+
+        # locate trajectory file
+        path_trajectory = os.path.join(path,'trajectory.csv')
+        if not os.path.exists(path_trajectory):
+            print('Warning: Trajectory file not found! Try to find replacement.')
+            path_trajectory = ''
+            for file in file_list:
+                if file.endswith('.csv'):
+                    path_trajectory = os.path.join(path,file)
+                    print("Set trajectory to '"+file+"'\n")
+                    break
+            if path_trajectory == '':
+                raise Exception('Missing trajectory file')
+        
+        # locate pcd folder
+        path_pcd = os.path.join(path,'pcd')
+        if not os.path.exists(path_pcd):
+            print('Warning: pcd folder not found! Try to find replacement.')
+            path_pcd = ''
+            folder_list = [s for s in file_list if os.path.isdir(os.path.join(path,s)) and not s.startswith('.')]
+            for folder in folder_list:
+                files = os.listdir(os.path.join(path,folder))
+                if files[0].endswith('.pcd'):
+                    path_pcd = os.path.join(path,folder)
+                    print("Set pcd folder to '"+folder+"'\n")
+                    break
+            if path_pcd == '':
+                raise Exception('Missing pcd file')
+
+        return path_trajectory, path_pcd
 
     def transform_point_cloud(self, pc, T):
 

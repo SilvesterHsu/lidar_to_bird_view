@@ -79,13 +79,13 @@ class Self_Awareness:
         for i in range(1, len(self.veldynes)):
             vels = np.vstack([vels, self.veldynes[i]])
 
-        print(np.min(vels[:, 2]), np.max(vels[:, 2]))
+        # print(np.min(vels[:, 2]), np.max(vels[:, 2]))
 
         # transform the submap from global map frame to local lidar frame
         T2 = np.linalg.inv(T)
         vels2 = self.transform_point_cloud(vels, T2)
 
-        print(np.min(vels2[:, 2]), np.max(vels2[:, 2]))
+        # print(np.min(vels2[:, 2]), np.max(vels2[:, 2]))
 
         return vels2
 
@@ -121,10 +121,10 @@ class Self_Awareness:
         # 50, 50 res = 0.25 / 100, 100 res=0.5
         bird_view_img = lidar_projection.birds_eye_point_cloud(vels, side_range=(-100, 100), fwd_range=(-100, 100),
                                                                res=0.5, min_height=-8, max_height=20)
-        print("bird-view image shape: ", bird_view_img.shape)
+        # print("bird-view image shape: ", bird_view_img.shape)
         cv2.imwrite(file_name, bird_view_img)
 
-        print("[inference_node]: runing time = " + str(time.time() - start_time))
+        # print("[inference_node]: runing time = " + str(time.time() - start_time))
 
 
 if __name__ == '__main__':

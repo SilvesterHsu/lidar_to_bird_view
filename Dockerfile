@@ -4,13 +4,15 @@ ENV DEBIAN_FRONTEND noninteractive
 
 # python-pcl dependent
 RUN apt update -y && \
-    apt install software-properties-common -y && \
+    apt install software-properties-common curl -y && \
     add-apt-repository ppa:deadsnakes/ppa -y && \
     add-apt-repository ppa:v-launchpad-jochen-sprickerhof-de/pcl -y && \
-    apt install python3.5-dev libpcl-dev -y
+    apt install python3.5-dev libpcl-dev -y && \
+    apt-get autoclean && \
+    apt-get autoremove && \
+    rm -rf /var/lib/apt/lists/*
 
-RUN apt install curl -y && \
-    curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && \
+RUN curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && \
     python3.5 get-pip.py
 
 RUN pip3 install cython==0.25.2 numpy && \

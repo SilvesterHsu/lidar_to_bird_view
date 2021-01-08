@@ -35,7 +35,7 @@ class Self_Awareness:
         self.QUEUE_NUM = 10
         self.veldynes = []
         self.odoms = []
-        num_frames = self.get_num_frames()
+        #num_frames = self.get_num_frames()
 
         index = 0
 
@@ -43,15 +43,15 @@ class Self_Awareness:
             os.mkdir(os.path.join(data_dir, 'imgs'))
         time.sleep(1)
         
-        for i in tqdm(range(index, index + num_frames)):
-            try:
-                file = os.path.join(self.path_pcd, '{0:06d}.pcd'.format(i))
-                points = pcl.load(file)
-
-                vels = self.update_velodyne_queue(points, poses[i][1::])
-                self.save_vels(vels, file_name=os.path.join(data_dir, 'imgs/{0:06d}.png'.format(i)))
-            except:
-                pass
+        pcd_file_list = os.listdir(self.path_pcd)
+        pcd_file_list.sort()
+        
+        for pcd_file in tqdm(pcd_file_list):
+            index = int(pcd_file[:-4])
+            file = os.path.join(self.path_pcd, pcd_file)
+            points = pcl.load(file)
+            vels = self.update_velodyne_queue(points, poses[index][1::])
+            self.save_vels(vels, file_name=os.path.join(data_dir, 'imgs/{0:06d}.png'.format(index)))
 
     def get_num_frames(self):
         num_trajectory = len(genfromtxt(self.path_trajectory, delimiter=','))

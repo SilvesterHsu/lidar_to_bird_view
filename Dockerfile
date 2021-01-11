@@ -14,7 +14,6 @@ RUN apt update && \
 
 # install notebook extensions
 RUN pip install jupyter_contrib_nbextensions jupyter_nbextensions_configurator autopep8 notebook==5.7.8 && \
-    pip install torch==1.3.1+cpu torchvision==0.4.2+cpu -f https://download.pytorch.org/whl/torch_stable.html && \
     jupyter contrib nbextension install --user && \
     jupyter nbextensions_configurator enable --user && \
     jupyter nbextension enable splitcell/splitcell && \

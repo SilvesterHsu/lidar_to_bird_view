@@ -3,7 +3,8 @@ FROM silvesterhsu/lidar_to_bird_view:latest
 ENV DEBIAN_FRONTEND noninteractive
 
 # install essential software & oh-my-zsh
-RUN apt update && \
+RUN add-apt-repository -r ppa:v-launchpad-jochen-sprickerhof-de/pcl -y && \
+    apt update && \
     apt-get install zsh curl git tree nano -y && \
     chsh -s /bin/zsh && \
     echo y|sh -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)" && \
